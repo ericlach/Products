@@ -1,0 +1,70 @@
+<div id="highChartContainer" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+
+<a href="#" data-hide-element='chart'>Chart</a>
+
+<h2> Products in the market </h2>
+
+<table>
+  <tbody>
+    <tr>
+      <th>ID</th>
+      <th>Item</th>
+      <th>Cost</th>
+      <th>Seller</th>
+    </tr>
+
+    <% @products.each do |product| %>
+      <tr>
+        <td><%= product.id %></td>
+      	<td><%= product.name %></td>
+      	<td data-product='<%= product.id %>'>$<%= product.price %></td>
+      	<td><%= product.user.name if product.user.present? %></td>
+        <td><%= link_to "+", product_path(product), 
+                'data-incr-price' => product.id,  
+                :method           => :put %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<script type='text/javascript'>
+      $(document).ready(function(){
+            chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'highChartContainer',
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false
+            },
+            title: {
+                text: 'Random products'
+            },
+            series: [{
+                type: 'pie',
+                name: 'Product Share',
+                data:
+                  <%=
+                      @products.map do |product|
+                        [product.name, product.price/@sum_price]
+                      end.to_json.html_safe
+                  %>
+            }]
+        });
+      $('[data-hide-element=chart]').on('click', function(){
+          $('#highChartContainer').toggle()
+        });
+      $('[data-incr-price]').on('click', function(e){
+
+        console.log('clicked');
+        })
+      });
+</script>
+
+
+
+   
+   
+	
+ 
+
+
